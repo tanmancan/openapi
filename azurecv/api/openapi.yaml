@@ -1,0 +1,1150 @@
+openapi: 3.0.1
+info:
+  description: "The Computer Vision API provides state-of-the-art algorithms to process\
+    \ images and return information. For example, it can be used to determine if an\
+    \ image contains mature content, or it can be used to find all the people in an\
+    \ image.  It also has other features like categorizing the content of images,\
+    \ and describing an image with complete English sentences."
+  title: Computer Vision APIs (2024-02-01)
+  version: 2024-02-01
+servers:
+- url: https://cognitiveuseprod.cognitiveservices.azure.com/computervision
+security:
+- apiKeyHeader: []
+- apiKeyQuery: []
+paths:
+  /imageanalysis:analyze:
+    post:
+      description: "Analyze the input image. The request either contains image stream\
+        \ with any content type ['image/*', 'application/octet-stream'], or a JSON\
+        \ payload which includes an url property to be used to retrieve the image\
+        \ stream."
+      operationId: image_analysis_analyze
+      parameters:
+      - explode: true
+        in: query
+        name: api-version
+        required: false
+        schema:
+          default: 2024-02-01
+          type: string
+        style: form
+      - description: "The visual features requested: tags, objects, caption, denseCaptions,\
+          \ read, smartCrops, people. At least one visual feature must be specified."
+        explode: false
+        in: query
+        name: features
+        required: false
+        schema:
+          items:
+            type: string
+          type: array
+        style: form
+      - description: "Optional parameter to specify the version of the AI model, or\
+          \ \"latest\" to use the latest available model. Defaults to \"latest\"."
+        explode: true
+        in: query
+        name: model-version
+        required: false
+        schema:
+          default: latest
+          type: string
+        style: form
+      - description: "The desired language for output generation. If this parameter\
+          \ is not specified, the default value is \"en\". See https://aka.ms/cv-languages\
+          \ for a list of supported languages."
+        explode: true
+        in: query
+        name: language
+        required: false
+        schema:
+          default: en
+          type: string
+        style: form
+      - description: "A list of aspect ratios to use for smartCrops feature. Aspect\
+          \ ratios are calculated by dividing the target crop width by the height.\
+          \ Supported values are between 0.75 and 1.8 (inclusive). Multiple values\
+          \ should be comma-separated. If this parameter is not specified, the service\
+          \ will return one crop suggestion with an aspect ratio it sees fit between\
+          \ 0.5 and 2.0 (inclusive)."
+        explode: false
+        in: query
+        name: smartcrops-aspect-ratios
+        required: false
+        schema:
+          items:
+            type: string
+          type: array
+        style: form
+      - description: "Boolean flag for enabling gender-neutral captioning for caption\
+          \ and denseCaptions features. If this parameter is not specified, the default\
+          \ value is \"false\"."
+        explode: true
+        in: query
+        name: gender-neutral-caption
+        required: false
+        schema:
+          default: false
+          type: boolean
+        style: form
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              format: binary
+              type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              example: "{\r\n  \"modelVersion\": \"string\",\r\n  \"captionResult\"\
+                : {\r\n    \"text\": \"string\",\r\n    \"confidence\": 0.0\r\n  },\r\
+                \n  \"denseCaptionsResult\": {\r\n    \"values\": [\r\n      {\r\n\
+                \        \"text\": \"string\",\r\n        \"confidence\": 0.0,\r\n\
+                \        \"boundingBox\": {\r\n          \"x\": 0,\r\n          \"\
+                y\": 0,\r\n          \"w\": 0,\r\n          \"h\": 0\r\n        }\r\
+                \n      }\r\n    ]\r\n  },\r\n  \"metadata\": {\r\n    \"width\":\
+                \ 0,\r\n    \"height\": 0\r\n  },\r\n  \"tagsResult\": {\r\n    \"\
+                values\": [\r\n      {\r\n        \"name\": \"string\",\r\n      \
+                \  \"confidence\": 0.0\r\n      }\r\n    ]\r\n  },\r\n  \"objectsResult\"\
+                : {\r\n    \"values\": [\r\n      {\r\n        \"id\": \"string\"\
+                ,\r\n        \"boundingBox\": {\r\n          \"x\": 0,\r\n       \
+                \   \"y\": 0,\r\n          \"w\": 0,\r\n          \"h\": 0\r\n   \
+                \     },\r\n        \"tags\": [\r\n          {\r\n            \"name\"\
+                : \"string\",\r\n            \"confidence\": 0.0\r\n          }\r\n\
+                \        ]\r\n      }\r\n    ]\r\n  },\r\n  \"readResult\": {\r\n\
+                \    \"blocks\": [\r\n      {\r\n        \"lines\": [\r\n        \
+                \  {\r\n            \"text\": \"string\",\r\n            \"boundingPolygon\"\
+                : [\r\n              {\r\n                \"x\": 0,\r\n          \
+                \      \"y\": 0\r\n              }\r\n            ],\r\n         \
+                \   \"words\": [\r\n              {\r\n                \"text\": \"\
+                string\",\r\n                \"boundingPolygon\": [\r\n          \
+                \        {\r\n                    \"x\": 0,\r\n                  \
+                \  \"y\": 0\r\n                  }\r\n                ],\r\n     \
+                \           \"confidence\": 0.0\r\n              }\r\n           \
+                \ ]\r\n          }\r\n        ]\r\n      }\r\n    ]\r\n  },\r\n  \"\
+                smartCropsResult\": {\r\n    \"values\": [\r\n      {\r\n        \"\
+                aspectRatio\": 0.0,\r\n        \"boundingBox\": {\r\n          \"\
+                x\": 0,\r\n          \"y\": 0,\r\n          \"w\": 0,\r\n        \
+                \  \"h\": 0\r\n        }\r\n      }\r\n    ]\r\n  },\r\n  \"peopleResult\"\
+                : {\r\n    \"values\": [\r\n      {\r\n        \"boundingBox\": {\r\
+                \n          \"x\": 0,\r\n          \"y\": 0,\r\n          \"w\": 0,\r\
+                \n          \"h\": 0\r\n        },\r\n        \"confidence\": 0.0\r\
+                \n      }\r\n    ]\r\n  }\r\n}"
+              schema:
+                $ref: '#/components/schemas/ImageAnalysisResult'
+          description: Success
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error
+          headers:
+            x-ms-error-code:
+              explode: false
+              schema:
+                type: string
+              style: simple
+      summary: Analyze
+  /retrieval:vectorizeImage:
+    post:
+      description: Return vector from an image.
+      operationId: /retrieval_vectorizeImage
+      parameters:
+      - description: Model version. Please refer https://aka.ms/image-retrieval for
+          supported model versions.
+        explode: true
+        in: query
+        name: model-version
+        required: true
+        schema:
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImageUrl'
+        description: A JSON document with a URL pointing to the image that is to be
+          analyzed.
+        required: false
+      responses:
+        "200":
+          content:
+            application/json:
+              example: "{\r\n  \"vector\": [\r\n    0.0\r\n  ],\r\n  \"modelVersion\"\
+                : \"string\"\r\n}"
+              schema:
+                $ref: '#/components/schemas/SingleVectorResult'
+          description: Success
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error
+          headers:
+            x-ms-error-code:
+              explode: false
+              schema:
+                type: string
+              style: simple
+      summary: VectorizeImage
+      x-codegen-request-body-name: imageUrl
+  /retrieval:vectorizeText:
+    post:
+      description: Return vector from a text.
+      operationId: /retrieval_vectorizeText
+      parameters:
+      - description: Model version. Please refer https://aka.ms/image-retrieval for
+          supported model versions.
+        explode: true
+        in: query
+        name: model-version
+        required: true
+        schema:
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VectorizeTextRequest'
+        description: Request of VectorizeText.
+        required: false
+      responses:
+        "200":
+          content:
+            application/json:
+              example: "{\r\n  \"vector\": [\r\n    0.0\r\n  ],\r\n  \"modelVersion\"\
+                : \"string\"\r\n}"
+              schema:
+                $ref: '#/components/schemas/SingleVectorResult'
+          description: Success
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error
+          headers:
+            x-ms-error-code:
+              explode: false
+              schema:
+                type: string
+              style: simple
+      summary: VectorizeText
+      x-codegen-request-body-name: vectorizeTextRequest
+components:
+  schemas:
+    BoundingBox:
+      description: A bounding box for an area inside an image.
+      example:
+        w: 1
+        x: 0
+        h: 1
+        "y": 0
+      properties:
+        x:
+          description: "Left-coordinate of the top left point of the area, in pixels."
+          format: int32
+          minimum: 0
+          type: integer
+        "y":
+          description: "Top-coordinate of the top left point of the area, in pixels."
+          format: int32
+          minimum: 0
+          type: integer
+        w:
+          description: "Width measured from the top-left point of the area, in pixels."
+          format: int32
+          minimum: 1
+          type: integer
+        h:
+          description: "Height measured from the top-left point of the area, in pixels."
+          format: int32
+          minimum: 1
+          type: integer
+      required:
+      - h
+      - w
+      - x
+      - "y"
+      type: object
+    CaptionResult:
+      description: A brief description of what the image depicts.
+      example:
+        confidence: 0.08008281904610115
+        text: text
+      properties:
+        text:
+          description: The text of the caption.
+          minLength: 1
+          type: string
+        confidence:
+          description: "The level of confidence the service has in the caption. Confidence\
+            \ scores span the range of 0.0 to 1.0 (inclusive), with higher values\
+            \ indicating a higher confidence of a match."
+          format: double
+          maximum: 1
+          minimum: 0
+          type: number
+      required:
+      - confidence
+      - text
+      type: object
+    ContentTag:
+      description: "An entity observation in the image, along with the confidence\
+        \ score."
+      example:
+        confidence: 0.3616076749251911
+        name: name
+      properties:
+        name:
+          description: Name of the entity.
+          minLength: 1
+          type: string
+        confidence:
+          description: "The level of confidence that the entity was observed. Confidence\
+            \ scores span the range of 0.0 to 1.0 (inclusive), with higher values\
+            \ indicating a higher confidence of a match."
+          format: double
+          maximum: 1
+          minimum: 0
+          type: number
+      required:
+      - confidence
+      - name
+      type: object
+    CropRegion:
+      description: A region identified for smart cropping. There will be one region
+        returned for each requested aspect ratio.
+      example:
+        boundingBox:
+          w: 1
+          x: 0
+          h: 1
+          "y": 0
+        aspectRatio: 1.2315135367772556
+      properties:
+        aspectRatio:
+          description: The aspect ratio of the crop region.
+          format: double
+          type: number
+        boundingBox:
+          $ref: '#/components/schemas/BoundingBox'
+      required:
+      - aspectRatio
+      - boundingBox
+      type: object
+    DenseCaption:
+      description: A brief description of what the image depicts.
+      example:
+        boundingBox:
+          w: 1
+          x: 0
+          h: 1
+          "y": 0
+        confidence: 0.6027456183070403
+        text: text
+      properties:
+        text:
+          description: The text of the caption.
+          minLength: 1
+          type: string
+        confidence:
+          description: "The level of confidence the service has in the caption. Confidence\
+            \ scores span the range of 0.0 to 1.0 (inclusive), with higher values\
+            \ indicating a higher confidence of a match."
+          format: double
+          maximum: 1
+          minimum: 0
+          type: number
+        boundingBox:
+          $ref: '#/components/schemas/BoundingBox'
+      required:
+      - confidence
+      - text
+      type: object
+    DenseCaptionsResult:
+      description: A list of captions.
+      example:
+        values:
+        - boundingBox:
+            w: 1
+            x: 0
+            h: 1
+            "y": 0
+          confidence: 0.6027456183070403
+          text: text
+        - boundingBox:
+            w: 1
+            x: 0
+            h: 1
+            "y": 0
+          confidence: 0.6027456183070403
+          text: text
+      properties:
+        values:
+          description: A list of captions.
+          items:
+            $ref: '#/components/schemas/DenseCaption'
+          type: array
+      required:
+      - values
+      type: object
+    DetectedObject:
+      description: Describes a detected object in an image.
+      example:
+        boundingBox:
+          w: 1
+          x: 0
+          h: 1
+          "y": 0
+        id: id
+        tags:
+        - confidence: 0.3616076749251911
+          name: name
+        - confidence: 0.3616076749251911
+          name: name
+      properties:
+        id:
+          description: Id of the detected object.
+          minLength: 1
+          type: string
+        boundingBox:
+          $ref: '#/components/schemas/BoundingBox'
+        tags:
+          description: Classification confidences of the detected object.
+          items:
+            $ref: '#/components/schemas/ContentTag'
+          minItems: 1
+          type: array
+      required:
+      - boundingBox
+      - tags
+      type: object
+    DetectedPerson:
+      description: A person detected in an image.
+      example:
+        boundingBox:
+          w: 1
+          x: 0
+          h: 1
+          "y": 0
+        confidence: 0.10246457001441578
+      properties:
+        boundingBox:
+          $ref: '#/components/schemas/BoundingBox'
+        confidence:
+          description: "Confidence score of having observed the person in the image.\
+            \ Confidence scores span the range of 0.0 to 1.0 (inclusive), with higher\
+            \ values indicating a higher confidence of a match."
+          format: double
+          maximum: 1
+          minimum: 0
+          type: number
+      required:
+      - boundingBox
+      - confidence
+      type: object
+    DetectedTextBlock:
+      description: A detected text block.
+      example:
+        lines:
+        - words:
+          - confidence: 0.7386281948385884
+            text: text
+            boundingPolygon:
+            - x: 2
+              "y": 4
+            - x: 2
+              "y": 4
+          - confidence: 0.7386281948385884
+            text: text
+            boundingPolygon:
+            - x: 2
+              "y": 4
+            - x: 2
+              "y": 4
+          text: text
+          boundingPolygon:
+          - x: 2
+            "y": 4
+          - x: 2
+            "y": 4
+        - words:
+          - confidence: 0.7386281948385884
+            text: text
+            boundingPolygon:
+            - x: 2
+              "y": 4
+            - x: 2
+              "y": 4
+          - confidence: 0.7386281948385884
+            text: text
+            boundingPolygon:
+            - x: 2
+              "y": 4
+            - x: 2
+              "y": 4
+          text: text
+          boundingPolygon:
+          - x: 2
+            "y": 4
+          - x: 2
+            "y": 4
+      properties:
+        lines:
+          description: List of text lines in the text block.
+          items:
+            $ref: '#/components/schemas/DetectedTextLine'
+          type: array
+      required:
+      - lines
+      type: object
+    DetectedTextLine:
+      description: A detected text line.
+      example:
+        words:
+        - confidence: 0.7386281948385884
+          text: text
+          boundingPolygon:
+          - x: 2
+            "y": 4
+          - x: 2
+            "y": 4
+        - confidence: 0.7386281948385884
+          text: text
+          boundingPolygon:
+          - x: 2
+            "y": 4
+          - x: 2
+            "y": 4
+        text: text
+        boundingPolygon:
+        - x: 2
+          "y": 4
+        - x: 2
+          "y": 4
+      properties:
+        text:
+          description: Text content of the detected text line.
+          minLength: 1
+          type: string
+        boundingPolygon:
+          description: Bounding polygon of the text line.
+          items:
+            $ref: '#/components/schemas/ImagePoint'
+          minItems: 4
+          type: array
+        words:
+          description: List of words in the text line.
+          items:
+            $ref: '#/components/schemas/DetectedTextWord'
+          type: array
+      required:
+      - boundingPolygon
+      - text
+      - words
+      type: object
+    DetectedTextWord:
+      description: "A detected word consisting of a contiguous sequence of characters.\
+        \ For non-space delimited languages,\\r\\nsuch as Chinese, Japanese, and Korean,\
+        \ each character is represented as its own word."
+      example:
+        confidence: 0.7386281948385884
+        text: text
+        boundingPolygon:
+        - x: 2
+          "y": 4
+        - x: 2
+          "y": 4
+      properties:
+        text:
+          description: Text content of the word.
+          minLength: 1
+          type: string
+        boundingPolygon:
+          description: Bounding polygon of the word.
+          items:
+            $ref: '#/components/schemas/ImagePoint'
+          minItems: 4
+          type: array
+        confidence:
+          description: "The level of confidence that the word was detected. Confidence\
+            \ scores span the range of 0.0 to 1.0 (inclusive), with higher values\
+            \ indicating a higher confidence of a match."
+          format: double
+          maximum: 1
+          minimum: 0
+          type: number
+      required:
+      - boundingPolygon
+      - confidence
+      - text
+      type: object
+    ErrorResponse:
+      description: Response returned when an error occurs.
+      example:
+        error:
+          code: code
+          innererror:
+            code: code
+            innererror: null
+            message: message
+          details:
+          - null
+          - null
+          message: message
+          target: target
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorResponseDetails'
+      required:
+      - error
+      type: object
+    ErrorResponseDetails:
+      description: Error info.
+      example:
+        code: code
+        innererror:
+          code: code
+          innererror: null
+          message: message
+        details:
+        - null
+        - null
+        message: message
+        target: target
+      properties:
+        code:
+          description: Error code.
+          type: string
+        message:
+          description: Error message.
+          type: string
+        target:
+          description: Target of the error.
+          type: string
+        details:
+          description: List of detailed errors.
+          items:
+            $ref: '#/components/schemas/ErrorResponseDetails'
+          type: array
+        innererror:
+          $ref: '#/components/schemas/ErrorResponseInnerError'
+      required:
+      - code
+      - message
+      type: object
+    ErrorResponseInnerError:
+      description: Detailed error.
+      example:
+        code: code
+        innererror: null
+        message: message
+      properties:
+        code:
+          description: Error code.
+          type: string
+        message:
+          description: Error message.
+          type: string
+        innererror:
+          $ref: '#/components/schemas/ErrorResponseInnerError'
+      required:
+      - code
+      - message
+      type: object
+    ImageAnalysisResult:
+      description: Describe the combined results of different types of image analysis.
+      example:
+        denseCaptionsResult:
+          values:
+          - boundingBox:
+              w: 1
+              x: 0
+              h: 1
+              "y": 0
+            confidence: 0.6027456183070403
+            text: text
+          - boundingBox:
+              w: 1
+              x: 0
+              h: 1
+              "y": 0
+            confidence: 0.6027456183070403
+            text: text
+        metadata:
+          width: 1
+          height: 1
+        smartCropsResult:
+          values:
+          - boundingBox:
+              w: 1
+              x: 0
+              h: 1
+              "y": 0
+            aspectRatio: 1.2315135367772556
+          - boundingBox:
+              w: 1
+              x: 0
+              h: 1
+              "y": 0
+            aspectRatio: 1.2315135367772556
+        modelVersion: modelVersion
+        captionResult:
+          confidence: 0.08008281904610115
+          text: text
+        objectsResult:
+          values:
+          - boundingBox:
+              w: 1
+              x: 0
+              h: 1
+              "y": 0
+            id: id
+            tags:
+            - confidence: 0.3616076749251911
+              name: name
+            - confidence: 0.3616076749251911
+              name: name
+          - boundingBox:
+              w: 1
+              x: 0
+              h: 1
+              "y": 0
+            id: id
+            tags:
+            - confidence: 0.3616076749251911
+              name: name
+            - confidence: 0.3616076749251911
+              name: name
+        tagsResult:
+          values:
+          - confidence: 0.3616076749251911
+            name: name
+          - confidence: 0.3616076749251911
+            name: name
+        readResult:
+          blocks:
+          - lines:
+            - words:
+              - confidence: 0.7386281948385884
+                text: text
+                boundingPolygon:
+                - x: 2
+                  "y": 4
+                - x: 2
+                  "y": 4
+              - confidence: 0.7386281948385884
+                text: text
+                boundingPolygon:
+                - x: 2
+                  "y": 4
+                - x: 2
+                  "y": 4
+              text: text
+              boundingPolygon:
+              - x: 2
+                "y": 4
+              - x: 2
+                "y": 4
+            - words:
+              - confidence: 0.7386281948385884
+                text: text
+                boundingPolygon:
+                - x: 2
+                  "y": 4
+                - x: 2
+                  "y": 4
+              - confidence: 0.7386281948385884
+                text: text
+                boundingPolygon:
+                - x: 2
+                  "y": 4
+                - x: 2
+                  "y": 4
+              text: text
+              boundingPolygon:
+              - x: 2
+                "y": 4
+              - x: 2
+                "y": 4
+          - lines:
+            - words:
+              - confidence: 0.7386281948385884
+                text: text
+                boundingPolygon:
+                - x: 2
+                  "y": 4
+                - x: 2
+                  "y": 4
+              - confidence: 0.7386281948385884
+                text: text
+                boundingPolygon:
+                - x: 2
+                  "y": 4
+                - x: 2
+                  "y": 4
+              text: text
+              boundingPolygon:
+              - x: 2
+                "y": 4
+              - x: 2
+                "y": 4
+            - words:
+              - confidence: 0.7386281948385884
+                text: text
+                boundingPolygon:
+                - x: 2
+                  "y": 4
+                - x: 2
+                  "y": 4
+              - confidence: 0.7386281948385884
+                text: text
+                boundingPolygon:
+                - x: 2
+                  "y": 4
+                - x: 2
+                  "y": 4
+              text: text
+              boundingPolygon:
+              - x: 2
+                "y": 4
+              - x: 2
+                "y": 4
+        peopleResult:
+          values:
+          - boundingBox:
+              w: 1
+              x: 0
+              h: 1
+              "y": 0
+            confidence: 0.10246457001441578
+          - boundingBox:
+              w: 1
+              x: 0
+              h: 1
+              "y": 0
+            confidence: 0.10246457001441578
+      properties:
+        modelVersion:
+          description: Model Version.
+          minLength: 1
+          type: string
+        captionResult:
+          $ref: '#/components/schemas/CaptionResult'
+        denseCaptionsResult:
+          $ref: '#/components/schemas/DenseCaptionsResult'
+        metadata:
+          $ref: '#/components/schemas/ImageMetadata'
+        tagsResult:
+          $ref: '#/components/schemas/TagsResult'
+        objectsResult:
+          $ref: '#/components/schemas/ObjectsResult'
+        readResult:
+          $ref: '#/components/schemas/ReadResult'
+        smartCropsResult:
+          $ref: '#/components/schemas/SmartCropsResult'
+        peopleResult:
+          $ref: '#/components/schemas/PeopleResult'
+      required:
+      - metadata
+      - modelVersion
+      type: object
+    ImageMetadata:
+      description: The image metadata information such as height and width.
+      example:
+        width: 1
+        height: 1
+      properties:
+        width:
+          description: The width of the image in pixels.
+          format: int32
+          minimum: 1
+          type: integer
+        height:
+          description: The height of the image in pixels.
+          format: int32
+          minimum: 1
+          type: integer
+      required:
+      - height
+      - width
+      type: object
+    ImagePoint:
+      description: An object representing a point in the image.
+      example:
+        x: 2
+        "y": 4
+      properties:
+        x:
+          description: The x-coordinate of this point.
+          format: int32
+          type: integer
+        "y":
+          description: The y-coordinate of this point.
+          format: int32
+          type: integer
+      required:
+      - x
+      - "y"
+      type: object
+    ImageUrl:
+      description: A JSON document with a URL pointing to the image that is to be
+        analyzed.
+      example: "{\r\n  \"url\": \"string\"\r\n}"
+      properties:
+        url:
+          description: Publicly reachable URL of an image.
+          type: string
+      required:
+      - url
+      type: object
+    ObjectsResult:
+      description: Describes detected objects in an image.
+      example:
+        values:
+        - boundingBox:
+            w: 1
+            x: 0
+            h: 1
+            "y": 0
+          id: id
+          tags:
+          - confidence: 0.3616076749251911
+            name: name
+          - confidence: 0.3616076749251911
+            name: name
+        - boundingBox:
+            w: 1
+            x: 0
+            h: 1
+            "y": 0
+          id: id
+          tags:
+          - confidence: 0.3616076749251911
+            name: name
+          - confidence: 0.3616076749251911
+            name: name
+      properties:
+        values:
+          description: An array of detected objects.
+          items:
+            $ref: '#/components/schemas/DetectedObject'
+          type: array
+      required:
+      - values
+      type: object
+    PeopleResult:
+      description: An object describing whether the image contains people.
+      example:
+        values:
+        - boundingBox:
+            w: 1
+            x: 0
+            h: 1
+            "y": 0
+          confidence: 0.10246457001441578
+        - boundingBox:
+            w: 1
+            x: 0
+            h: 1
+            "y": 0
+          confidence: 0.10246457001441578
+      properties:
+        values:
+          description: An array of detected people.
+          items:
+            $ref: '#/components/schemas/DetectedPerson'
+          type: array
+      required:
+      - values
+      type: object
+    ReadResult:
+      description: The results of an Read operation.
+      example:
+        blocks:
+        - lines:
+          - words:
+            - confidence: 0.7386281948385884
+              text: text
+              boundingPolygon:
+              - x: 2
+                "y": 4
+              - x: 2
+                "y": 4
+            - confidence: 0.7386281948385884
+              text: text
+              boundingPolygon:
+              - x: 2
+                "y": 4
+              - x: 2
+                "y": 4
+            text: text
+            boundingPolygon:
+            - x: 2
+              "y": 4
+            - x: 2
+              "y": 4
+          - words:
+            - confidence: 0.7386281948385884
+              text: text
+              boundingPolygon:
+              - x: 2
+                "y": 4
+              - x: 2
+                "y": 4
+            - confidence: 0.7386281948385884
+              text: text
+              boundingPolygon:
+              - x: 2
+                "y": 4
+              - x: 2
+                "y": 4
+            text: text
+            boundingPolygon:
+            - x: 2
+              "y": 4
+            - x: 2
+              "y": 4
+        - lines:
+          - words:
+            - confidence: 0.7386281948385884
+              text: text
+              boundingPolygon:
+              - x: 2
+                "y": 4
+              - x: 2
+                "y": 4
+            - confidence: 0.7386281948385884
+              text: text
+              boundingPolygon:
+              - x: 2
+                "y": 4
+              - x: 2
+                "y": 4
+            text: text
+            boundingPolygon:
+            - x: 2
+              "y": 4
+            - x: 2
+              "y": 4
+          - words:
+            - confidence: 0.7386281948385884
+              text: text
+              boundingPolygon:
+              - x: 2
+                "y": 4
+              - x: 2
+                "y": 4
+            - confidence: 0.7386281948385884
+              text: text
+              boundingPolygon:
+              - x: 2
+                "y": 4
+              - x: 2
+                "y": 4
+            text: text
+            boundingPolygon:
+            - x: 2
+              "y": 4
+            - x: 2
+              "y": 4
+      properties:
+        blocks:
+          description: A list of text blocks.
+          items:
+            $ref: '#/components/schemas/DetectedTextBlock'
+          type: array
+      required:
+      - blocks
+      type: object
+    SingleVectorResult:
+      description: Results of image vectorization.
+      example:
+        modelVersion: modelVersion
+        vector:
+        - 0.8008282
+        - 0.8008282
+      properties:
+        vector:
+          description: Vector of the image.
+          items:
+            format: float
+            type: number
+          type: array
+        modelVersion:
+          description: Model version.
+          type: string
+      type: object
+    SmartCropsResult:
+      description: Smart cropping result.
+      example:
+        values:
+        - boundingBox:
+            w: 1
+            x: 0
+            h: 1
+            "y": 0
+          aspectRatio: 1.2315135367772556
+        - boundingBox:
+            w: 1
+            x: 0
+            h: 1
+            "y": 0
+          aspectRatio: 1.2315135367772556
+      properties:
+        values:
+          description: Recommended regions for cropping the image.
+          items:
+            $ref: '#/components/schemas/CropRegion'
+          type: array
+      required:
+      - values
+      type: object
+    TagsResult:
+      description: A list of tags with confidence level.
+      example:
+        values:
+        - confidence: 0.3616076749251911
+          name: name
+        - confidence: 0.3616076749251911
+          name: name
+      properties:
+        values:
+          description: A list of tags with confidence level.
+          items:
+            $ref: '#/components/schemas/ContentTag'
+          type: array
+      required:
+      - values
+      type: object
+    VectorizeTextRequest:
+      description: Model for VectorizeText request.
+      example: "{\r\n  \"text\": \"string\"\r\n}"
+      properties:
+        text:
+          description: Text for vectorization.
+          minLength: 1
+          type: string
+      required:
+      - text
+      type: object
+  securitySchemes:
+    apiKeyHeader:
+      in: header
+      name: Ocp-Apim-Subscription-Key
+      type: apiKey
+    apiKeyQuery:
+      in: query
+      name: subscription-key
+      type: apiKey
+x-servers:
+- url: https://cognitiveuseprod.cognitiveservices.azure.com
+- url: https://cognitiveuseprod.openai.azure.com
+- url: https://eastus.api.cognitive.microsoft.com
+x-original-swagger-version: "2.0"
