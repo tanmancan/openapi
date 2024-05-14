@@ -1,0 +1,660 @@
+openapi: 3.0.1
+info:
+  title: Computer Vision APIs (2024-02-01)
+  description:
+    "The Computer Vision API provides state-of-the-art algorithms to process\
+    \ images and return information. For example, it can be used to determine if an\
+    \ image contains mature content, or it can be used to find all the people in an\
+    \ image.  It also has other features like categorizing the content of images,\
+    \ and describing an image with complete English sentences."
+  version: 2024-02-01
+servers:
+  - url: https://cognitiveuseprod.cognitiveservices.azure.com/computervision
+security:
+  - apiKeyHeader: []
+  - apiKeyQuery: []
+tags: []
+paths:
+  /imageanalysis:analyze:
+    post:
+      summary: Analyze
+      description:
+        "Analyze the input image. The request either contains image stream\
+        \ with any content type ['image/*', 'application/octet-stream'], or a JSON\
+        \ payload which includes an url property to be used to retrieve the image\
+        \ stream."
+      operationId: image_analysis_analyze
+      parameters:
+        - name: api-version
+          in: query
+          schema:
+            type: string
+            default: 2024-02-01
+        - name: features
+          in: query
+          description:
+            "The visual features requested: tags, objects, caption, denseCaptions,\
+            \ read, smartCrops, people. At least one visual feature must be specified."
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: model-version
+          in: query
+          description:
+            "Optional parameter to specify the version of the AI model, or\
+            \ \"latest\" to use the latest available model. Defaults to \"latest\"."
+          schema:
+            type: string
+            default: latest
+        - name: language
+          in: query
+          description:
+            "The desired language for output generation. If this parameter\
+            \ is not specified, the default value is \"en\". See https://aka.ms/cv-languages\
+            \ for a list of supported languages."
+          schema:
+            type: string
+            default: en
+        - name: smartcrops-aspect-ratios
+          in: query
+          description:
+            "A list of aspect ratios to use for smartCrops feature. Aspect\
+            \ ratios are calculated by dividing the target crop width by the height.\
+            \ Supported values are between 0.75 and 1.8 (inclusive). Multiple values\
+            \ should be comma-separated. If this parameter is not specified, the service\
+            \ will return one crop suggestion with an aspect ratio it sees fit between\
+            \ 0.5 and 2.0 (inclusive)."
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: gender-neutral-caption
+          in: query
+          description:
+            "Boolean flag for enabling gender-neutral captioning for caption\
+            \ and denseCaptions features. If this parameter is not specified, the default\
+            \ value is \"false\"."
+          schema:
+            type: boolean
+            default: false
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageAnalysisResult"
+              example:
+                "{\r\n  \"modelVersion\": \"string\",\r\n  \"captionResult\"\
+                : {\r\n    \"text\": \"string\",\r\n    \"confidence\": 0.0\r\n  },\r\
+                \n  \"denseCaptionsResult\": {\r\n    \"values\": [\r\n      {\r\n\
+                \        \"text\": \"string\",\r\n        \"confidence\": 0.0,\r\n\
+                \        \"boundingBox\": {\r\n          \"x\": 0,\r\n          \"\
+                y\": 0,\r\n          \"w\": 0,\r\n          \"h\": 0\r\n        }\r\
+                \n      }\r\n    ]\r\n  },\r\n  \"metadata\": {\r\n    \"width\":\
+                \ 0,\r\n    \"height\": 0\r\n  },\r\n  \"tagsResult\": {\r\n    \"\
+                values\": [\r\n      {\r\n        \"name\": \"string\",\r\n      \
+                \  \"confidence\": 0.0\r\n      }\r\n    ]\r\n  },\r\n  \"objectsResult\"\
+                : {\r\n    \"values\": [\r\n      {\r\n        \"id\": \"string\"\
+                ,\r\n        \"boundingBox\": {\r\n          \"x\": 0,\r\n       \
+                \   \"y\": 0,\r\n          \"w\": 0,\r\n          \"h\": 0\r\n   \
+                \     },\r\n        \"tags\": [\r\n          {\r\n            \"name\"\
+                : \"string\",\r\n            \"confidence\": 0.0\r\n          }\r\n\
+                \        ]\r\n      }\r\n    ]\r\n  },\r\n  \"readResult\": {\r\n\
+                \    \"blocks\": [\r\n      {\r\n        \"lines\": [\r\n        \
+                \  {\r\n            \"text\": \"string\",\r\n            \"boundingPolygon\"\
+                : [\r\n              {\r\n                \"x\": 0,\r\n          \
+                \      \"y\": 0\r\n              }\r\n            ],\r\n         \
+                \   \"words\": [\r\n              {\r\n                \"text\": \"\
+                string\",\r\n                \"boundingPolygon\": [\r\n          \
+                \        {\r\n                    \"x\": 0,\r\n                  \
+                \  \"y\": 0\r\n                  }\r\n                ],\r\n     \
+                \           \"confidence\": 0.0\r\n              }\r\n           \
+                \ ]\r\n          }\r\n        ]\r\n      }\r\n    ]\r\n  },\r\n  \"\
+                smartCropsResult\": {\r\n    \"values\": [\r\n      {\r\n        \"\
+                aspectRatio\": 0.0,\r\n        \"boundingBox\": {\r\n          \"\
+                x\": 0,\r\n          \"y\": 0,\r\n          \"w\": 0,\r\n        \
+                \  \"h\": 0\r\n        }\r\n      }\r\n    ]\r\n  },\r\n  \"peopleResult\"\
+                : {\r\n    \"values\": [\r\n      {\r\n        \"boundingBox\": {\r\
+                \n          \"x\": 0,\r\n          \"y\": 0,\r\n          \"w\": 0,\r\
+                \n          \"h\": 0\r\n        },\r\n        \"confidence\": 0.0\r\
+                \n      }\r\n    ]\r\n  }\r\n}"
+        "500":
+          description: Error
+          headers:
+            x-ms-error-code:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /retrieval:vectorizeImage:
+    post:
+      summary: VectorizeImage
+      description: Return vector from an image.
+      operationId: /retrieval_vectorizeImage
+      parameters:
+        - name: model-version
+          in: query
+          description:
+            Model version. Please refer https://aka.ms/image-retrieval for
+            supported model versions.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description:
+          A JSON document with a URL pointing to the image that is to be
+          analyzed.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ImageUrl"
+        required: false
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SingleVectorResult"
+              example:
+                "{\r\n  \"vector\": [\r\n    0.0\r\n  ],\r\n  \"modelVersion\"\
+                : \"string\"\r\n}"
+        "500":
+          description: Error
+          headers:
+            x-ms-error-code:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-codegen-request-body-name: imageUrl
+  /retrieval:vectorizeText:
+    post:
+      summary: VectorizeText
+      description: Return vector from a text.
+      operationId: /retrieval_vectorizeText
+      parameters:
+        - name: model-version
+          in: query
+          description:
+            Model version. Please refer https://aka.ms/image-retrieval for
+            supported model versions.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Request of VectorizeText.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VectorizeTextRequest"
+        required: false
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SingleVectorResult"
+              example:
+                "{\r\n  \"vector\": [\r\n    0.0\r\n  ],\r\n  \"modelVersion\"\
+                : \"string\"\r\n}"
+        "500":
+          description: Error
+          headers:
+            x-ms-error-code:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-codegen-request-body-name: vectorizeTextRequest
+components:
+  schemas:
+    BoundingBox:
+      required:
+        - h
+        - w
+        - x
+        - "y"
+      type: object
+      properties:
+        x:
+          minimum: 0
+          type: integer
+          description: "Left-coordinate of the top left point of the area, in pixels."
+          format: int32
+        "y":
+          minimum: 0
+          type: integer
+          description: "Top-coordinate of the top left point of the area, in pixels."
+          format: int32
+        w:
+          minimum: 1
+          type: integer
+          description: "Width measured from the top-left point of the area, in pixels."
+          format: int32
+        h:
+          minimum: 1
+          type: integer
+          description: "Height measured from the top-left point of the area, in pixels."
+          format: int32
+      description: A bounding box for an area inside an image.
+    CaptionResult:
+      required:
+        - confidence
+        - text
+      type: object
+      properties:
+        text:
+          minLength: 1
+          type: string
+          description: The text of the caption.
+        confidence:
+          maximum: 1
+          minimum: 0
+          type: number
+          description:
+            "The level of confidence the service has in the caption. Confidence\
+            \ scores span the range of 0.0 to 1.0 (inclusive), with higher values\
+            \ indicating a higher confidence of a match."
+          format: double
+      description: A brief description of what the image depicts.
+    ContentTag:
+      required:
+        - confidence
+        - name
+      type: object
+      properties:
+        name:
+          minLength: 1
+          type: string
+          description: Name of the entity.
+        confidence:
+          maximum: 1
+          minimum: 0
+          type: number
+          description:
+            "The level of confidence that the entity was observed. Confidence\
+            \ scores span the range of 0.0 to 1.0 (inclusive), with higher values\
+            \ indicating a higher confidence of a match."
+          format: double
+      description:
+        "An entity observation in the image, along with the confidence\
+        \ score."
+    CropRegion:
+      required:
+        - aspectRatio
+        - boundingBox
+      type: object
+      properties:
+        aspectRatio:
+          type: number
+          description: The aspect ratio of the crop region.
+          format: double
+        boundingBox:
+          $ref: "#/components/schemas/BoundingBox"
+      description:
+        A region identified for smart cropping. There will be one region
+        returned for each requested aspect ratio.
+    DenseCaption:
+      required:
+        - confidence
+        - text
+      type: object
+      properties:
+        text:
+          minLength: 1
+          type: string
+          description: The text of the caption.
+        confidence:
+          maximum: 1
+          minimum: 0
+          type: number
+          description:
+            "The level of confidence the service has in the caption. Confidence\
+            \ scores span the range of 0.0 to 1.0 (inclusive), with higher values\
+            \ indicating a higher confidence of a match."
+          format: double
+        boundingBox:
+          $ref: "#/components/schemas/BoundingBox"
+      description: A brief description of what the image depicts.
+    DenseCaptionsResult:
+      required:
+        - values
+      type: object
+      properties:
+        values:
+          type: array
+          description: A list of captions.
+          items:
+            $ref: "#/components/schemas/DenseCaption"
+      description: A list of captions.
+    DetectedObject:
+      required:
+        - boundingBox
+        - tags
+      type: object
+      properties:
+        id:
+          minLength: 1
+          type: string
+          description: Id of the detected object.
+        boundingBox:
+          $ref: "#/components/schemas/BoundingBox"
+        tags:
+          minItems: 1
+          type: array
+          description: Classification confidences of the detected object.
+          items:
+            $ref: "#/components/schemas/ContentTag"
+      description: Describes a detected object in an image.
+    DetectedPerson:
+      required:
+        - boundingBox
+        - confidence
+      type: object
+      properties:
+        boundingBox:
+          $ref: "#/components/schemas/BoundingBox"
+        confidence:
+          maximum: 1
+          minimum: 0
+          type: number
+          description:
+            "Confidence score of having observed the person in the image.\
+            \ Confidence scores span the range of 0.0 to 1.0 (inclusive), with higher\
+            \ values indicating a higher confidence of a match."
+          format: double
+      description: A person detected in an image.
+    DetectedTextBlock:
+      required:
+        - lines
+      type: object
+      properties:
+        lines:
+          type: array
+          description: List of text lines in the text block.
+          items:
+            $ref: "#/components/schemas/DetectedTextLine"
+      description: A detected text block.
+    DetectedTextLine:
+      required:
+        - boundingPolygon
+        - text
+        - words
+      type: object
+      properties:
+        text:
+          minLength: 1
+          type: string
+          description: Text content of the detected text line.
+        boundingPolygon:
+          minItems: 4
+          type: array
+          description: Bounding polygon of the text line.
+          items:
+            $ref: "#/components/schemas/ImagePoint"
+        words:
+          type: array
+          description: List of words in the text line.
+          items:
+            $ref: "#/components/schemas/DetectedTextWord"
+      description: A detected text line.
+    DetectedTextWord:
+      required:
+        - boundingPolygon
+        - confidence
+        - text
+      type: object
+      properties:
+        text:
+          minLength: 1
+          type: string
+          description: Text content of the word.
+        boundingPolygon:
+          minItems: 4
+          type: array
+          description: Bounding polygon of the word.
+          items:
+            $ref: "#/components/schemas/ImagePoint"
+        confidence:
+          maximum: 1
+          minimum: 0
+          type: number
+          description:
+            "The level of confidence that the word was detected. Confidence\
+            \ scores span the range of 0.0 to 1.0 (inclusive), with higher values\
+            \ indicating a higher confidence of a match."
+          format: double
+      description:
+        "A detected word consisting of a contiguous sequence of characters.\
+        \ For non-space delimited languages,\\r\\nsuch as Chinese, Japanese, and Korean,\
+        \ each character is represented as its own word."
+    ErrorResponse:
+      required:
+        - error
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorResponseDetails"
+      description: Response returned when an error occurs.
+    ErrorResponseDetails:
+      required:
+        - code
+        - message
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error code.
+        message:
+          type: string
+          description: Error message.
+        target:
+          type: string
+          description: Target of the error.
+        details:
+          type: array
+          description: List of detailed errors.
+          items:
+            $ref: "#/components/schemas/ErrorResponseDetails"
+        innererror:
+          $ref: "#/components/schemas/ErrorResponseInnerError"
+      description: Error info.
+    ErrorResponseInnerError:
+      required:
+        - code
+        - message
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error code.
+        message:
+          type: string
+          description: Error message.
+        innererror:
+          $ref: "#/components/schemas/ErrorResponseInnerError"
+      description: Detailed error.
+    ImageAnalysisResult:
+      required:
+        - metadata
+        - modelVersion
+      type: object
+      properties:
+        modelVersion:
+          minLength: 1
+          type: string
+          description: Model Version.
+        captionResult:
+          $ref: "#/components/schemas/CaptionResult"
+        denseCaptionsResult:
+          $ref: "#/components/schemas/DenseCaptionsResult"
+        metadata:
+          $ref: "#/components/schemas/ImageMetadata"
+        tagsResult:
+          $ref: "#/components/schemas/TagsResult"
+        objectsResult:
+          $ref: "#/components/schemas/ObjectsResult"
+        readResult:
+          $ref: "#/components/schemas/ReadResult"
+        smartCropsResult:
+          $ref: "#/components/schemas/SmartCropsResult"
+        peopleResult:
+          $ref: "#/components/schemas/PeopleResult"
+      description: Describe the combined results of different types of image analysis.
+    ImageMetadata:
+      required:
+        - height
+        - width
+      type: object
+      properties:
+        width:
+          minimum: 1
+          type: integer
+          description: The width of the image in pixels.
+          format: int32
+        height:
+          minimum: 1
+          type: integer
+          description: The height of the image in pixels.
+          format: int32
+      description: The image metadata information such as height and width.
+    ImagePoint:
+      required:
+        - x
+        - "y"
+      type: object
+      properties:
+        x:
+          type: integer
+          description: The x-coordinate of this point.
+          format: int32
+        "y":
+          type: integer
+          description: The y-coordinate of this point.
+          format: int32
+      description: An object representing a point in the image.
+    ImageUrl:
+      required:
+        - url
+      type: object
+      properties:
+        url:
+          type: string
+          description: Publicly reachable URL of an image.
+      description:
+        A JSON document with a URL pointing to the image that is to be
+        analyzed.
+      example: "{\r\n  \"url\": \"string\"\r\n}"
+    ObjectsResult:
+      required:
+        - values
+      type: object
+      properties:
+        values:
+          type: array
+          description: An array of detected objects.
+          items:
+            $ref: "#/components/schemas/DetectedObject"
+      description: Describes detected objects in an image.
+    PeopleResult:
+      required:
+        - values
+      type: object
+      properties:
+        values:
+          type: array
+          description: An array of detected people.
+          items:
+            $ref: "#/components/schemas/DetectedPerson"
+      description: An object describing whether the image contains people.
+    ReadResult:
+      required:
+        - blocks
+      type: object
+      properties:
+        blocks:
+          type: array
+          description: A list of text blocks.
+          items:
+            $ref: "#/components/schemas/DetectedTextBlock"
+      description: The results of an Read operation.
+    SingleVectorResult:
+      type: object
+      properties:
+        vector:
+          type: array
+          description: Vector of the image.
+          items:
+            type: number
+            format: float
+        modelVersion:
+          type: string
+          description: Model version.
+      description: Results of image vectorization.
+    SmartCropsResult:
+      required:
+        - values
+      type: object
+      properties:
+        values:
+          type: array
+          description: Recommended regions for cropping the image.
+          items:
+            $ref: "#/components/schemas/CropRegion"
+      description: Smart cropping result.
+    TagsResult:
+      required:
+        - values
+      type: object
+      properties:
+        values:
+          type: array
+          description: A list of tags with confidence level.
+          items:
+            $ref: "#/components/schemas/ContentTag"
+      description: A list of tags with confidence level.
+    VectorizeTextRequest:
+      required:
+        - text
+      type: object
+      properties:
+        text:
+          minLength: 1
+          type: string
+          description: Text for vectorization.
+      description: Model for VectorizeText request.
+      example: "{\r\n  \"text\": \"string\"\r\n}"
+  securitySchemes:
+    apiKeyHeader:
+      type: apiKey
+      name: Ocp-Apim-Subscription-Key
+      in: header
+    apiKeyQuery:
+      type: apiKey
+      name: subscription-key
+      in: query
+x-servers:
+  - url: https://cognitiveuseprod.cognitiveservices.azure.com
+  - url: https://cognitiveuseprod.openai.azure.com
+  - url: https://eastus.api.cognitive.microsoft.com
+x-original-swagger-version: "2.0"
